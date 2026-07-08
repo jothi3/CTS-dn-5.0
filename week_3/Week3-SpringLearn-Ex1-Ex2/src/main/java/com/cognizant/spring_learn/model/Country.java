@@ -1,4 +1,4 @@
-package com.cognizant.spring_learn;
+package com.cognizant.spring_learn.model;
 
 public class Country {
 
@@ -26,6 +26,6 @@ public class Country {
 
     @Override
     public String toString() {
-        return code + " - " + name;
+        return "Country [code=" + code + ", name=" + name + "]";
     }
 }
