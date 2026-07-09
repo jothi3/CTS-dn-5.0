@@ -1,0 +1,16 @@
+<countries>
+    <country>
+        <code>IN</code>
+        <name>India</name>
+    </country>
+
+    <country>
+        <code>US</code>
+        <name>United States</name>
+    </country>
+
+    <country>
+        <code>UK</code>
+        <name>United Kingdom</name>
+    </country>
+</countries>

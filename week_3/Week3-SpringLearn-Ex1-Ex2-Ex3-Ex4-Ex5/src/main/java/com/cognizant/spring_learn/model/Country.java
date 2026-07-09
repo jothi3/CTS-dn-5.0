@@ -5,7 +5,14 @@ public class Country {
     private String code;
     private String name;
 
+    // Default constructor
     public Country() {
+    }
+
+    // Parameterized constructor
+    public Country(String code, String name) {
+        this.code = code;
+        this.name = name;
     }
 
     public String getCode() {
@@ -22,10 +29,5 @@ public class Country {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Country [code=" + code + ", name=" + name + "]";
     }
 }
