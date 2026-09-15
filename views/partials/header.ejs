@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Med - Premium Online Pharmacy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <i class="fa-solid fa-notes-medical"></i> Nexus Med
+      </a>
+
+      <div class="search-bar-container">
+        <form action="/products" method="GET" class="search-form">
+          <input type="text" name="q" placeholder="Search medicines, wellness, brands..." class="search-input" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+          <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="/products"><i class="fa-solid fa-pills"></i> Catalog</a></li>
+        <li>
+          <a href="/cart">
+            <i class="fa-solid fa-cart-shopping"></i> Cart
+            <span class="cart-badge"><%= typeof cartSummary !== 'undefined' ? cartSummary.itemCount : 0 %></span>
+          </a>
+        </li>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <li><a href="/orders"><i class="fa-solid fa-box"></i> Orders</a></li>
+          <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout (<%= user.name %>)</a></li>
+        <% } else { %>
+          <li><a href="/login"><i class="fa-solid fa-user"></i> Login</a></li>
+          <li><a href="/register" class="btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">Register</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </header>
+  <main class="main-container">

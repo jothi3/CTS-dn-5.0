@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<div class="auth-container">
+  <h1 class="auth-title">Create Account</h1>
+  <p class="auth-subtitle">Join Nexus Med for fast 24/7 digital pharmacy access.</p>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert-danger"><%= error %></div>
+  <% } %>
+
+  <form action="/register" method="POST">
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" name="name" class="form-input" placeholder="John Doe" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" name="email" class="form-input" placeholder="you@example.com" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirm Password</label>
+      <input type="password" name="confirmPassword" class="form-input" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; margin-top: 1rem;">
+      <i class="fa-solid fa-user-plus"></i> Create Account
+    </button>
+  </form>
+
+  <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+    Already have an account? <a href="/login" style="font-weight: 700;">Sign in</a>
+  </p>
+</div>
+
+<%- include('partials/footer') %>

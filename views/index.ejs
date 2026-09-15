@@ -1,0 +1,85 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Certified Healthcare & Genuine Medicines</h1>
+    <p class="hero-subtitle">Fast, secure doorstep delivery of prescription pharmaceuticals, immunity boosters, and daily health essentials.</p>
+    <div style="display: flex; gap: 1rem;">
+      <a href="/products" class="btn-primary"><i class="fa-solid fa-cart-flatbed-suitcases"></i> Browse All Medicines</a>
+      <a href="/register" class="btn-secondary"><i class="fa-solid fa-user-plus"></i> Create Account</a>
+    </div>
+  </div>
+  <div style="font-size: 8rem; color: rgba(255,255,255,0.15);">
+    <i class="fa-solid fa-prescription-bottle-medical"></i>
+  </div>
+</section>
+
+<section class="categories-section">
+  <div class="section-header">
+    <h2 class="section-title">Popular Healthcare Categories</h2>
+    <a href="/products" style="font-weight: 600;">View All <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+  <div class="category-grid">
+    <a href="/products?category=pain-relief" class="category-card">
+      <div class="category-icon"><i class="fa-solid fa-tablets"></i></div>
+      <div class="category-name">Pain & Fever</div>
+    </a>
+    <a href="/products?category=antibiotics" class="category-card">
+      <div class="category-icon"><i class="fa-solid fa-capsules"></i></div>
+      <div class="category-name">Antibiotics & Care</div>
+    </a>
+    <a href="/products?category=vitamins" class="category-card">
+      <div class="category-icon"><i class="fa-solid fa-apple-whole"></i></div>
+      <div class="category-name">Vitamins & Minerals</div>
+    </a>
+    <a href="/products?category=diabetes-cardiac" class="category-card">
+      <div class="category-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <div class="category-name">Diabetes & Heart</div>
+    </a>
+    <a href="/products?category=digestive" class="category-card">
+      <div class="category-icon"><i class="fa-solid fa-virus"></i></div>
+      <div class="category-name">Digestive Health</div>
+    </a>
+    <a href="/products?category=personal-care" class="category-card">
+      <div class="category-icon"><i class="fa-solid fa-pump-soap"></i></div>
+      <div class="category-name">Personal Care</div>
+    </a>
+  </div>
+</section>
+
+<section>
+  <div class="section-header">
+    <h2 class="section-title">Featured Medicines</h2>
+  </div>
+  <div class="products-grid">
+    <% products.slice(0, 6).forEach(product => { %>
+      <div class="product-card">
+        <div class="product-image-wrap">
+          <img src="<%= product.image_url %>" alt="<%= product.name %>" class="product-image">
+          <% if (product.badge) { %>
+            <span class="badge <%= product.requires_rx ? 'rx-badge' : '' %>"><%= product.badge %></span>
+          <% } %>
+        </div>
+        <div class="product-info">
+          <span class="product-brand"><%= product.brand %></span>
+          <h3 class="product-name"><%= product.name %></h3>
+          <p class="product-dosage"><%= product.dosage %> • <%= product.pack_size %></p>
+          <div class="product-bottom">
+            <div>
+              <span class="price">₹<%= product.price %></span>
+              <% if (product.original_price) { %>
+                <span class="original-price">₹<%= product.original_price %></span>
+              <% } %>
+            </div>
+            <form action="/cart/add" method="POST">
+              <input type="hidden" name="productId" value="<%= product.id %>">
+              <button type="submit" class="btn-add-cart"><i class="fa-solid fa-cart-plus"></i> Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

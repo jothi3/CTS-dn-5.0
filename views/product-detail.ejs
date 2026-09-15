@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+
+<div style="background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 2.5rem; margin-bottom: 3rem; display: flex; gap: 3rem; flex-wrap: wrap;">
+  <div style="flex: 1; min-width: 300px; max-width: 450px;">
+    <div style="background: #f8fafc; border-radius: 12px; overflow: hidden; padding: 1rem; border: 1px solid var(--border); position: relative;">
+      <img src="<%= product.image_url %>" alt="<%= product.name %>" style="width: 100%; height: 350px; object-fit: cover; border-radius: 8px;">
+      <% if (product.badge) { %>
+        <span class="badge <%= product.requires_rx ? 'rx-badge' : '' %>" style="top: 20px; left: 20px;"><%= product.badge %></span>
+      <% } %>
+    </div>
+  </div>
+
+  <div style="flex: 1.5; min-width: 300px;">
+    <span class="product-brand"><%= product.brand %></span>
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--dark); margin: 0.25rem 0 0.75rem 0;"><%= product.name %></h1>
+    
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <span style="background: #fef3c7; color: #b45309; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.9rem;">
+        <i class="fa-solid fa-star"></i> <%= product.rating || 4.8 %> (<%= product.reviews_count || 120 %> Reviews)
+      </span>
+      <% if (product.requires_rx) { %>
+        <span style="color: #dc2626; font-weight: 600; font-size: 0.9rem;"><i class="fa-solid fa-file-prescription"></i> Prescription Required</span>
+      <% } else { %>
+        <span style="color: #059669; font-weight: 600; font-size: 0.9rem;"><i class="fa-solid fa-circle-check"></i> OTC / No Prescription Required</span>
+      <% } %>
+    </div>
+
+    <div style="margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 0.75rem;">
+      <span style="font-size: 2.2rem; font-weight: 800; color: var(--dark);">₹<%= product.price %></span>
+      <% if (product.original_price) { %>
+        <span style="font-size: 1.2rem; color: var(--text-muted); text-decoration: line-through;">₹<%= product.original_price %></span>
+      <% } %>
+      <span style="color: #059669; font-weight: 700; font-size: 0.9rem;">(Inclusive of all taxes)</span>
+    </div>
+
+    <p style="color: var(--text-main); line-height: 1.7; margin-bottom: 1.5rem;"><%= product.description %></p>
+
+    <div style="background: #f8fafc; border-radius: 10px; padding: 1.25rem; margin-bottom: 2rem; border: 1px solid var(--border);">
+      <div style="margin-bottom: 0.5rem;"><strong>Dosage / Composition:</strong> <%= product.dosage %></div>
+      <div style="margin-bottom: 0.5rem;"><strong>Packaging Size:</strong> <%= product.pack_size %></div>
+      <% if (product.active_ingredient) { %>
+        <div><strong>Active Ingredient:</strong> <%= product.active_ingredient %></div>
+      <% } %>
+    </div>
+
+    <form action="/cart/add" method="POST" style="display: flex; gap: 1rem; align-items: center;">
+      <input type="hidden" name="productId" value="<%= product.id %>">
+      <div style="display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white;">
+        <input type="number" name="quantity" value="1" min="1" max="10" style="width: 70px; padding: 0.75rem; border: none; text-align: center; font-weight: 700; outline: none;">
+      </div>
+      <button type="submit" class="btn-primary" style="padding: 0.85rem 2.5rem;"><i class="fa-solid fa-cart-plus"></i> Add To Cart</button>
+    </form>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

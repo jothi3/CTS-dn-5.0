@@ -1,0 +1,170 @@
+<%- include('partials/header') %>
+
+<h1 style="font-size: 2rem; font-weight: 800; color: var(--dark); margin-bottom: 1.5rem;">Secure Checkout</h1>
+
+<div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+  <div style="flex: 2; min-width: 320px;">
+    <div style="background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-truck-ramp-box"></i> Shipping & Contact Details</h2>
+
+      <form id="checkoutForm">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="fullName" class="form-input" value="<%= user ? user.name : 'Valued Customer' %>" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="email" class="form-input" value="<%= user ? user.email : 'customer@nexusmed.com' %>" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="phone" class="form-input" value="+91 98765 43210" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pincode</label>
+            <input type="text" id="pincode" class="form-input" value="400001" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Delivery Street Address</label>
+          <input type="text" id="address" class="form-input" value="123 Healthcare Blvd, Medical Hub" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">City / Region</label>
+          <input type="text" id="city" class="form-input" value="Mumbai" required>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding: 1rem; background: #e0f2fe; border-radius: 8px; color: #0369a1; font-size: 0.9rem;">
+          <i class="fa-solid fa-lock"></i> All transactions are encrypted via 256-bit SSL and processed securely by Razorpay.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 300px;">
+    <div style="background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; position: sticky; top: 90px;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">Order Breakdown</h3>
+
+      <div style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;">
+        <% cartSummary.items.forEach(item => { %>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+            <span><%= item.product.name %> (x<%= item.quantity %>)</span>
+            <span style="font-weight: 600;">₹<%= item.product.price * item.quantity %></span>
+          </div>
+        <% }) %>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.95rem;">
+        <span>Subtotal</span>
+        <span>₹<%= cartSummary.subtotal %></span>
+      </div>
+
+      <% if (cartSummary.discount > 0) { %>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.95rem; color: #059669; font-weight: 600;">
+          <span>Discount</span>
+          <span>-₹<%= cartSummary.discount %></span>
+        </div>
+      <% } %>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1.25rem; font-size: 0.95rem;">
+        <span>Delivery</span>
+        <span><%= cartSummary.shipping === 0 ? 'FREE' : '₹' + cartSummary.shipping %></span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; padding-top: 1rem; border-top: 2px dashed var(--border); font-size: 1.3rem; font-weight: 800; color: var(--dark); margin-bottom: 1.5rem;">
+        <span>Total Payable</span>
+        <span>₹<%= cartSummary.total %></span>
+      </div>
+
+      <button id="payNowBtn" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+        <i class="fa-solid fa-credit-card"></i> Pay ₹<%= cartSummary.total %> with Razorpay
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('payNowBtn').addEventListener('click', async function () {
+    const shippingAddress = {
+      fullName: document.getElementById('fullName').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      address: document.getElementById('address').value,
+      city: document.getElementById('city').value,
+      pincode: document.getElementById('pincode').value
+    };
+
+    try {
+      // 1. Create order on server
+      const res = await fetch('/api/payment/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shippingAddress })
+      });
+
+      const result = await res.json();
+      if (!result.success) {
+        alert('Order Creation Failed: ' + (result.message || 'Error initializing payment'));
+        return;
+      }
+
+      const order = result.data;
+
+      // 2. Configure Razorpay SDK modal options
+      const options = {
+        key: "<%= razorpayKeyId %>",
+        amount: order.amount,
+        currency: order.currency || "INR",
+        name: "Nexus Med Pharmacy",
+        description: "Payment for Order #" + order.id,
+        order_id: order.id,
+        handler: async function (response) {
+          // 3. Post verification payload to server
+          const verifyRes = await fetch('/api/payment/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              shippingAddress
+            })
+          });
+
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            alert('🎉 Payment Verified Successfully! Redirecting to orders history...');
+            window.location.href = '/orders';
+          } else {
+            alert('❌ Verification Failed: ' + verifyData.message);
+          }
+        },
+        prefill: {
+          name: shippingAddress.fullName,
+          email: shippingAddress.email,
+          contact: shippingAddress.phone
+        },
+        theme: {
+          color: "#0284c7"
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        alert('Payment Failed: ' + response.error.description);
+      });
+      rzp.open();
+    } catch (err) {
+      alert('Network or server error during checkout initiation.');
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>
