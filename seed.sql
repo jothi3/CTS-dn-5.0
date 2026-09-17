@@ -124,4 +124,7 @@ VALUES
   'Mild local stinging'
 )
 ON DUPLICATE KEY UPDATE 
-name=VALUES(name), price=VALUES(price), stock_count=VALUES(stock_count);
+name = VALUES(name),
+price = VALUES(price),
+stock_count = VALUES(stock_count),
+image_url = VALUES(image_url);
